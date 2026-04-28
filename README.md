@@ -30,9 +30,11 @@
 - Explicit content rate respects user tolerance
 - Average feature distance should be <0.8 (closer = better alignment)
 - Overall recommendation score (0-1, higher is better)
+
+
+
+---
 ### Architecture Overview: A short explanation of your system diagram.
-
-
 
 ```
 User Profile (preferences + context)
