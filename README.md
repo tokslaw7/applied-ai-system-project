@@ -6,6 +6,8 @@
 
 ## Title and Summary
 What your project does and why it matters.
+This model suggests 5 songs from the dataset based on a user's preferred genre, valence, acoustiness and energy level.
+
 
 
 ---
