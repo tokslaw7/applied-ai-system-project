@@ -57,8 +57,6 @@ class Recommender:
                        genre_weight: float = 0.3, 
                        feature_weight: float = 0.7) -> float:
         """
-        Calculate a similarity score between user preferences and a song.
-        
         Score combines:
         - Genre matching (categorical): +1 if genres match, 0 otherwise
         - Numerical features (energy, valence, acousticness): based on Euclidean distance
