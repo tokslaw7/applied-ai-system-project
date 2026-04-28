@@ -1,11 +1,11 @@
 ## PROJECT NAME
 ## Tokslaw Vibe 
 
-- Explicitly name your original project (from Modules 1-3) and provide a 2-3 sentence summary of its original goals and capabilities.
+- The original project is frm Music Recommendation starter which mainly recommended top 5 songs based on user profile that is with closest match to user preferences.
 
 ## Title and Summary
-What your project does and why it matters.
-This Music model suggests 10 songs from the dataset based on a user's preferred genre, valence, acoustiness and energy level.
+
+- This Music model suggests 10 songs from the dataset based on a user's preferred genre, valence, acoustiness and energy level.
 
 ---
 ## Core Features
@@ -47,6 +47,10 @@ Final Score (0-1) per song
 		 ↓
 Top-k Rankings + Explanations + Validation Report
 ```
+---
+
+![System Diagram](assets/System%20Diagram.png)
+
 ---
 ## Setup Instructions: 
 - Step-by-step directions to run your code.

@@ -1,0 +1,11 @@
+flowchart LR
+  U["User Profile<br/>(preferences + context)"] --> C["Contextual Preference Adjuster"]
+  C --> F["Feature Distance Calculator<br/>(energy, valence, acousticness)"]
+  F --> G["Genre Matcher & Context Scorer"]
+  G --> S["Score Aggregator<br/>(final score per song)"]
+  S --> R["Ranker & Top-k Selection"]
+  R --> O["Output: Recommendations<br/>+ Explanations"]
+  R --> V["Validation & Tests"]
+  V --> T["Testing Suite<br/>- unit tests<br/>- integration tests"]
+  O --> V
+  style V fill:#f9f,stroke:#333,stroke-width:1px
