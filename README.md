@@ -1,7 +1,7 @@
-## PROJECT NAME
-## Tokslaw Vibe 
+# 🎵 Music Recommendation 
+**Tokslaw Vibe**
 
-- The original project is frm Music Recommendation starter which mainly recommended top 5 songs based on user profile that is with closest match to user preferences.
+- The original project is from Music Recommendation starter which mainly recommended top 5 songs based on user profile that is with closest match to user preferences.
 
 ## Title and Summary
 
