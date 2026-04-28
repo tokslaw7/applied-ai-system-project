@@ -54,6 +54,12 @@ Top-k Rankings + Explanations + Validation Report
 ![System Diagram](assets/System%20Diagram.png)
 
 ---
+## Video Walkthrough
+
+[![Video Walkthrough](https://cdn.loom.com/sessions/thumbnails/3f72c3bfb32a4c078f77e71bf9a527ee-with-play.gif)](https://www.loom.com/share/3f72c3bfb32a4c078f77e71bf9a527ee)
+
+
+---
 ## Setup Instructions: 
 - Step-by-step directions to run your code.
 
@@ -136,7 +142,6 @@ This project shows the importance of **explainability and validation** in recomm
 2. Simple, geometric approaches (Euclidean distance) are often better than complex models if they're interpretable and controllable.
 3. Context matters enormously—the same song is "good" or "bad" depending on *when* and *why* you're listening.
 4. Validation metrics must match real constraints (explicit content, genre diversity) not just numerical accuracy.
-***What this project taught you about AI and problem-solving.***
 
 ### Functionality
 **Music Recommender System** — A content-based recommendation engine that suggests songs tailored to user preferences and listening context.
