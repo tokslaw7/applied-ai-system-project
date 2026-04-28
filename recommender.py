@@ -44,6 +44,9 @@ class UserProfile:
     target_valence: float = 0.5
     target_danceability: float = 0.5
     preferred_acousticness: float = 0.5
+    activity_context: str = "general"
+    time_of_day: str = "any"
+    explicit_tolerance: float = 1.0
 
 class Recommender:
     """
@@ -52,6 +55,80 @@ class Recommender:
     """
     def __init__(self, songs: List[Song]):
         self.songs = songs
+
+    def _build_contextual_preferences(self, user_profile: UserProfile) -> Dict[str, float]:
+        """
+        Adjust the user's base preferences for listening context.
+
+        Returns a normalized target profile that is used for scoring.
+        """
+        targets = {
+            "energy": user_profile.target_energy,
+            "valence": user_profile.target_valence,
+            "danceability": user_profile.target_danceability,
+            "acousticness": user_profile.preferred_acousticness,
+            "tempo": user_profile.preferred_tempo,
+        }
+
+        activity_context = user_profile.activity_context.lower()
+        if activity_context == "studying":
+            targets["energy"] = min(targets["energy"], 0.35)
+            targets["valence"] = min(targets["valence"], 0.55)
+            targets["danceability"] = min(targets["danceability"], 0.45)
+            targets["acousticness"] = max(targets["acousticness"], 0.55)
+            targets["tempo"] = min(targets["tempo"], 110.0)
+        elif activity_context == "workout":
+            targets["energy"] = max(targets["energy"], 0.75)
+            targets["valence"] = max(targets["valence"], 0.55)
+            targets["danceability"] = max(targets["danceability"], 0.7)
+            targets["acousticness"] = min(targets["acousticness"], 0.35)
+            targets["tempo"] = max(targets["tempo"], 130.0)
+        elif activity_context == "commute":
+            targets["energy"] = min(max(targets["energy"], 0.45), 0.75)
+            targets["valence"] = min(max(targets["valence"], 0.45), 0.75)
+            targets["danceability"] = min(max(targets["danceability"], 0.5), 0.8)
+            targets["tempo"] = min(max(targets["tempo"], 90.0), 140.0)
+
+        time_of_day = user_profile.time_of_day.lower()
+        if time_of_day == "morning":
+            targets["energy"] = max(targets["energy"], 0.55)
+            targets["valence"] = max(targets["valence"], 0.6)
+            targets["tempo"] = max(targets["tempo"], 100.0)
+        elif time_of_day == "afternoon":
+            targets["energy"] = min(max(targets["energy"], 0.5), 0.8)
+            targets["valence"] = min(max(targets["valence"], 0.45), 0.8)
+        elif time_of_day == "evening":
+            targets["energy"] = min(targets["energy"], 0.6)
+            targets["valence"] = min(targets["valence"], 0.65)
+            targets["acousticness"] = max(targets["acousticness"], 0.45)
+            targets["tempo"] = min(targets["tempo"], 120.0)
+
+        return targets
+
+    def _context_score(self, user_profile: UserProfile, song: Song) -> float:
+        """
+        Score explicit-lyrics tolerance and short contextual fit signals.
+        """
+        score = 1.0
+
+        if song.explicit:
+            explicit_tolerance = max(0.0, min(1.0, user_profile.explicit_tolerance))
+            score *= explicit_tolerance
+
+        if user_profile.likes_acoustic and song.acousticness >= 0.5:
+            score *= 1.05
+        elif user_profile.likes_acoustic and song.acousticness < 0.2:
+            score *= 0.9
+
+        activity_context = user_profile.activity_context.lower()
+        if activity_context == "studying" and song.instrumentalness >= 0.4:
+            score *= 1.05
+        elif activity_context == "workout" and song.danceability >= 0.7:
+            score *= 1.05
+        elif activity_context == "commute" and 0.35 <= song.valence <= 0.75:
+            score *= 1.03
+
+        return max(0.0, min(1.0, score))
 
     def calculate_score(self, user_profile: UserProfile, song: Song, 
                        genre_weight: float = 0.3, 
@@ -75,10 +152,11 @@ class Recommender:
         
         # Numerical features score: based on Euclidean distance
         # Features to compare: energy, valence, acousticness
+        contextual_targets = self._build_contextual_preferences(user_profile)
         user_features = [
-            user_profile.target_energy,
-            user_profile.target_valence,
-            user_profile.preferred_acousticness
+            contextual_targets["energy"],
+            contextual_targets["valence"],
+            contextual_targets["acousticness"]
         ]
         song_features = [
             song.energy,
@@ -101,6 +179,9 @@ class Recommender:
         # Note: weights should sum to 1.0 for normalized output
         total_weight = genre_weight + feature_weight
         combined_score = (genre_weight * genre_score + feature_weight * feature_score) / total_weight
+
+        contextual_bonus = self._context_score(user_profile, song)
+        combined_score = combined_score * contextual_bonus
         
         return combined_score
 
